@@ -133,8 +133,11 @@ def process_existing_channel(name, info):
 
 def generate_m3u8(state):
     lines = ["#EXTM3U"]
-    sorted_channels = sorted(state.values(), key=lambda x: (x["group"], x["name"]))
-    
+  state = {
+       k: v for k, v in state.items() 
+       if isinstance(v, dict) and ("name" in v or "nome" in v)
+   }
+       
     active_count = 0
     for ch in sorted_channels:
         if not ch.get("is_active") or not ch.get("stream_url"):
