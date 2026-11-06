@@ -133,10 +133,18 @@ def process_existing_channel(name, info):
 
 def generate_m3u8(state):
     lines = ["#EXTM3U"]
-  state = {
-       k: v for k, v in state.items() 
-       if isinstance(v, dict) and ("name" in v or "nome" in v)
-   }
+    
+    # 1. Filtra entradas inválidas ou que não possuem nome
+    valid_state = {
+        k: v for k, v in state.items() 
+        if isinstance(v, dict) and ("name" in v or "nome" in v)
+    }
+    
+    # 2. Ordena os canais de forma segura usando .get() para evitar KeyError
+    sorted_channels = sorted(
+        valid_state.values(), 
+        key=lambda x: (x.get("group", "Outros"), x.get("name", x.get("nome", "Sem Nome")))
+    )
        
     active_count = 0
     for ch in sorted_channels:
